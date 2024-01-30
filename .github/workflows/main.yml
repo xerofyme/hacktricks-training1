@@ -1,0 +1,26 @@
+name: 'Get AWS Flag'
+ 
+# The workflow should only trigger on pull requests to the main branch
+on:
+  workflow_dispatch:
+ 
+# Required to get the ID Token that will be used for OIDC
+permissions:
+  id-token: write
+ 
+jobs:
+  aws:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+ 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::555636176821:role/sts-lab-2-target
+          role-session-name: OIDCSession
+ 
+      - run: aws secretsmanager get-secret-value --secret-id flag_sts_lab_2
+        shell: bash
